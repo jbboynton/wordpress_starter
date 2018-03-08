@@ -1,0 +1,45 @@
+# vim: set ft=ruby:
+
+Vagrant.configure("2") do |config|
+
+  config.vm.box = "Knowy/Ubuntu-14.04-Amd64"
+
+  config.vm.network "private_network", ip: "192.168.55.35"
+  config.vm.network :forwarded_port, guest: 22, host: 2208, id: "ssh",
+    auto_correct: true
+
+  config.vm.hostname = "esmv2.dev"
+  config.hostsupdater.aliases = ["www.esmv2.dev"]
+  config.hostsupdater.remove_on_suspend = false
+
+  config.ssh.forward_agent = true
+
+  config.timezone.value = "America/New_York"
+
+  config.vm.synced_folder "../app", "/app",
+    owner: "www-data",
+    group: "www-data",
+    :mount_options => ["dmode=777","fmode=777"]
+
+  config.vm.synced_folder "../dump", "/dump",
+    :mount_options => ["dmode=777","fmode=777"]
+
+  config.vm.synced_folder ".", "/ops",
+    :mount_options => ["dmode=777","fmode=777"]
+
+  config.vm.synced_folder ".", "/vagrant",
+    disabled: true
+
+  config.vm.provider :virtualbox do |vb|
+    vb.customize [
+      'modifyvm', :id,
+      '--name', "esmv2",
+      '--memory', 3072,
+      "--cpus", 2
+    ]
+  end
+
+  config.vm.provision "shell", :privileged => false, run: 'always',
+    inline: "cd /ops"
+    # inline: "cd /ops && make clean && make run"
+end

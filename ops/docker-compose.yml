@@ -1,0 +1,59 @@
+version: "3.4"
+
+services:
+  https:
+    image: steveltn/https-portal:1
+    ports:
+      - '80:80'
+      - '443:443'
+    restart: always
+    environment:
+      STAGE: local
+      DOMAINS: >
+        esmv2.dev => www.esmv2.dev,
+        www.esmv2.dev -> http://wordpress
+      CLIENT_MAX_BODY_SIZE: 300M
+
+  # ftp:
+  #   image: stilliard/pure-ftpd:hardened
+  #   ports:
+  #     - '21:21'
+  #     - '30000-30009:30000-30009'
+  #   volumes:
+  #     - ftp-data:/etc/pure-ftpd/passwd
+  #     - type: bind
+  #       source: staff
+  #       target: /home/ftpusers/staff
+  #   environment:
+  #     ADDED_FLAGS: '-d -d'
+
+  db:
+    image: mariadb
+    volumes:
+      - data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      # MYSQL_ROOT_PASSWORD: root
+
+  wordpress:
+    image: xzito/xzito_wordpress-beta
+    volumes:
+      - /app:/var/www/app
+      # - staff:/var/www/app/content/staff
+    environment:
+      WORDPRESS_DB_HOST: ${DB_HOST}
+      WORDPRESS_DB_USER: ${DB_USER}
+      WORDPRESS_DB_PASSWORD: ${DB_PASSWORD}
+      WORDPRESS_DB_NAME: ${DB_NAME}
+      WORDPRESS_TABLE_PREFIX: ${DB_TABLE_PREFIX}
+      # WORDPRESS_DB_HOST: db:3306
+      # WORDPRESS_DB_USER: root
+      # WORDPRESS_DB_PASSWORD: root
+      # WORDPRESS_DB_NAME: wp_esmv
+      # WORDPRESS_TABLE_PREFIX: wp_
+    restart: always
+
+volumes:
+  data:
+  staff:
+  ftp-data:

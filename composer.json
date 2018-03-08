@@ -1,0 +1,57 @@
+{
+  "name": "xzito/xzito_starter",
+  "type": "project",
+  "description": "Boilerplate for a new client website.",
+  "homepage": "https://www.xzito.com",
+  "authors": [
+    {
+      "name": "James Boynton",
+      "email": "james.boynton0@gmail.com",
+      "homepage": "https://github.com/jbboynton"
+    },
+    {
+      "name": "Nicholas Mole",
+      "email": "nickmole@xzito.com",
+      "homepage": "https://github.com/nicholasmole"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/xzito/xzito_starter/issues"
+  },
+  "config": {
+    "preferred-install": "dist"
+  },
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://wpackagist.org"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/humanmade/S3-Uploads"
+    }
+  ],
+  "require": {
+    "php": "^7.1",
+    "composer/installers": "^1.5",
+    "humanmade/S3-Uploads": ">=2.0.0-beta3",
+    "johnpbloch/wordpress": "4.9.1",
+    "oscarotero/env": "^1.1.0",
+    "vlucas/phpdotenv": "^2.4.0",
+    "wpackagist-plugin/advanced-custom-fields": "^5.6.3"
+  },
+  "extra": {
+    "installer-paths": {
+      "web/app/mu-plugins/{$name}/": ["type:wordpress-muplugin"],
+      "web/app/plugins/{$name}/": ["type:wordpress-plugin"],
+      "web/app/themes/{$name}/": ["type:wordpress-theme"]
+    },
+    "wordpress-install-dir": "app/wp"
+  },
+  "scripts": {
+    "post-root-package-install": [
+      "bash ./bin/build_env"
+    ]
+  }
+}
+

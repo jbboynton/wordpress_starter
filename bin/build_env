@@ -1,0 +1,72 @@
+#!/bin/bash
+
+root_directory() {
+  root=$(git rev-parse --show-toplevel)
+
+  echo "$root"
+}
+
+exit_with_message() {
+  message="$1"
+  error_code="$2"
+
+  echo
+  echo "$message"
+  echo
+  echo "Exiting..."
+  echo
+  exit "$error_code"
+  echo
+}
+
+fetch_salt() {
+  salts_url="https://api.wordpress.org/secret-key/1.1/salt/"
+  salt="$(wget "$salts_url" -q -O - | sed -n 1p | rev)"
+
+  echo "${salt:3:64}"
+}
+
+if [ -f "$(root_directory)/.env" ]; then
+  message="A .env file already exists for your project."
+
+  exit_with_message "$message" 0
+fi
+
+read -r -d '' file_contents << EOM
+# Name of the website or client
+SITE_NAME="xzito"
+
+# Database configuration
+DB_NAME="${SITE_NAME}_db"
+DB_USER="${SITE_NAME}_user"
+DB_PASSWORD="$(fetch_salt)"
+DB_HOST="db:3306"
+DB_CHARSET="utf8"
+DB_COLLATE=""
+DB_TABLE_PREFIX="wp_"
+
+# AWS S3 configuration
+S3_UPLOADS_BUCKET="${SITE_NAME}-xzito"
+S3_UPLOADS_KEY=""
+S3_UPLOADS_SECRET=""
+S3_UPLOADS_REGION="us-east-1"
+
+# Salts
+AUTH_KEY="$(fetch_salt)"
+SECURE_AUTH_KEY="$(fetch_salt)"
+LOGGED_IN_KEY="$(fetch_salt)"
+NONCE_KEY="$(fetch_salt)"
+AUTH_SALT="$(fetch_salt)"
+SECURE_AUTH_SALT="$(fetch_salt)"
+LOGGED_IN_SALT="$(fetch_salt)"
+NONCE_SALT="$(fetch_salt)"
+
+EOM
+
+echo "$file_contents" > "$(root_directory)/.env"
+chmod 644 "$(root_directory)/.env"
+
+echo "Successfully created a .env file in the root of the project."
+echo
+exit 0
+

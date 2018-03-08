@@ -1,0 +1,41 @@
+# Files
+# -----
+.DS_Store
+.env*
+.htaccess
+.log
+.sql
+
+# Directories
+# -----------
+app/wp/
+ops/.vagrant/
+
+# Keep
+# ----
+app/content/*
+!app/content/mu-plugins/
+!app/content/plugins/
+!app/content/themes/
+!app/content/uploads/
+
+app/content/mu-plugins/*
+!app/content/mu-plugins/.gitkeep
+
+app/content/plugins/*
+!app/content/plugins/.gitkeep
+
+app/content/themes/*
+!app/content/themes/.gitkeep
+
+app/content/uploads/*
+!app/content/uploads/.gitkeep
+
+dump/*
+!dump/.gitkeep
+
+log/*
+!log/.gitkeep
+
+vendor/*
+!vendor/.gitkeep
